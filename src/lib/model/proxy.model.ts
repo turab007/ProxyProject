@@ -11,23 +11,24 @@ export class Proxy extends Model {
 Proxy.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
     name: {
       type: new DataTypes.STRING(128),
-      allowNull: false
+      allowNull: false,
+      unique: true
     }
   },
   {
-    tableName: "proxy",
+    tableName: "ProxyProject",
     sequelize: database // this bit is important
   }
 );
 
-Proxy.sync({ force: true }).then(() => console.log("Proxy table created"));
+Proxy.sync().then(() => console.log("Proxy table createdf"));
 
-export interface NodeInterface {
+export interface ProxyInterface {
   name: string;
 }

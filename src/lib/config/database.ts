@@ -1,7 +1,12 @@
 import { Sequelize } from "sequelize";
+import sequelize from "sequelize";
 
 export const database = new Sequelize({
-  database: "some_db",
+  database: "ProxyProject",
   dialect: "sqlite",
-  storage: ":memory:"
+  storage: "./proxy.sqlite"
 }); 
+
+database.authenticate().then(()=>{
+  console.log('Connection established');
+})

@@ -15,9 +15,9 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.patch('/', (req: Request, res: Response) => {
-    // proxyController.update(req, res);
+    proxyController.update(req, res);
 });
 
 router.delete('/', (req: Request, res: Response) => {
-    // proxyController.delete(req, res);
+    proxyController.delete(req, res);
 });

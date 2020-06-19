@@ -1,1 +1,1 @@
-export { Proxy } from './model/proxy.model';
+export { Proxy, ProxyInterface } from './model/proxy.model';
