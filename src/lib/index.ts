@@ -1,0 +1,1 @@
+export { Proxy } from './model/proxy.model';
