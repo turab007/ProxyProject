@@ -7,6 +7,6 @@ export const database = new Sequelize({
   storage: "./proxy.sqlite"
 }); 
 
-database.authenticate().then(()=>{
-  console.log('Connection established');
-})
+// database.authenticate().then(()=>{
+//   // console.log('Connection established');
+// })

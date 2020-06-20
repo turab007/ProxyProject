@@ -1,4 +1,4 @@
-import { ProxyController } from './Proxy/Proxy';
+import { ProxyController } from './Proxy/ProxyController';
 
 const proxyController = new ProxyController();
 

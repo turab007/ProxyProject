@@ -2,23 +2,33 @@ import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
 import { database } from "../config/database";
 
 export class Proxy extends Model {
-  public id!: number;
-  public name!: string;
+  public ip!: string;
+  public port!: number;
+  public code!: string;
+  public https!: string;
+  // public name!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
 Proxy.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+    ip: {
+      type: DataTypes.STRING,
+      unique: true,
       primaryKey: true
     },
-    name: {
-      type: new DataTypes.STRING(128),
+    port: {
+      type: new DataTypes.INTEGER,
       allowNull: false,
-      unique: true
+    },
+    code: {
+      type: new DataTypes.STRING,
+      allowNull: false
+    },
+    https: {
+      type: new DataTypes.STRING,
+      allowNull: false
     }
   },
   {
@@ -27,7 +37,11 @@ Proxy.init(
   }
 );
 
-Proxy.sync().then(() => console.log("Proxy table createdf"));
+Proxy.sync().then(() =>
+ {
+  //  console.log("Proxy table createdf")
+ }
+ );
 
 export interface ProxyInterface {
   name: string;

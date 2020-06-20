@@ -12,7 +12,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/cheerio": "^0.22.18",
+    "@types/request-promise-native": "^1.0.17",
+    "cheerio": "^1.0.0-rc.3",
     "express": "^4.17.1",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.8",
     "sequelize": "^5.21.13",
     "sqlite": "^4.0.11"
   },
