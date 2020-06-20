@@ -18,6 +18,11 @@ router.patch('/', (req: Request, res: Response) => {
     proxyController.update(req, res);
 });
 
+router.get('/refresh', (req: Request, res: Response) => {
+    proxyController.refresh(req, res);
+});
+
+
 router.delete('/', (req: Request, res: Response) => {
     proxyController.delete(req, res);
 });

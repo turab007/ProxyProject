@@ -19,28 +19,50 @@ export class ProxyController extends CrudController {
             res.json(proxy)
         })
 
-      
+
     }
 
-    public refresh(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response): void {
+    public async refresh(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
+        res.json(await this.getData())
+//   return await this.getData();
+
+    }
+
+    public getData() {
+        console.log('inside get Data')
         const options = {
             url: 'https://free-proxy-list.net/',
             method: 'GET',
         }
+
         request.get(options).then((html) => {
 
             const $ = cheerio.load(html)
 
-        const result = $(".table-responsive > table.table-striped > tbody > tr").map((i, element) => ({
-            ip: $(element).find('td:nth-of-type(1)').text().trim()
-            ,port: $(element).find('td:nth-of-type(2)').text().trim()
-            ,code: $(element).find('td:nth-of-type(3)').text().trim()
-            ,country: $(element).find('td:nth-of-type(4)').text().trim()
-            ,https: $(element).find('td:nth-of-type(7)').text().trim()
-          })).get()
-            console.log(JSON.stringify(result))
-            res.send(result);
-        })
+            const result = $(".table-responsive > table.table-striped > tbody > tr").map((i, element) => ({
+                ip: $(element).find('td:nth-of-type(1)').text().trim()
+                , port: $(element).find('td:nth-of-type(2)').text().trim()
+                , code: $(element).find('td:nth-of-type(3)').text().trim()
+                , country: $(element).find('td:nth-of-type(4)').text().trim()
+                , https: $(element).find('td:nth-of-type(7)').text().trim()
+                , provider: options.url
+            })).get()
+            const params: ProxyInterface[] = result;
+            result.forEach(async element => {
+                let a = await Proxy.findByPk(element.ip)
+                if (!a) {
+                    let resp = await Proxy.create(element)
+                    // console.log('this is resp ', resp);
+                }
+                else {
+                     await a.changed('updatedAt', true)
+
+                }
+            })
+            console.log('size is ', params.length)
+            return params;
+        });
+
     }
 
     public update(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response): void {

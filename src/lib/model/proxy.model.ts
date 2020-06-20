@@ -6,7 +6,7 @@ export class Proxy extends Model {
   public port!: number;
   public code!: string;
   public https!: string;
-  // public name!: string;
+  public provider!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -29,6 +29,10 @@ Proxy.init(
     https: {
       type: new DataTypes.STRING,
       allowNull: false
+    },
+    provider: {
+      type: new DataTypes.STRING,
+      allowNull: false
     }
   },
   {
@@ -37,12 +41,17 @@ Proxy.init(
   }
 );
 
-Proxy.sync().then(() =>
- {
+Proxy.sync().then(() => {
   //  console.log("Proxy table createdf")
- }
- );
+}
+);
 
 export interface ProxyInterface {
-  name: string;
+  ip: string;
+  port: number;
+  code: string;
+  https: string;
+  provider: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
