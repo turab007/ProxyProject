@@ -22,6 +22,10 @@ router.get('/refresh', (req: Request, res: Response) => {
     proxyController.refresh(req, res);
 });
 
+router.get('/basicTest',(req: Request, res: Response)=>{
+proxyController.checkBasivFunctionality(req,res);
+});
+
 
 router.delete('/', (req: Request, res: Response) => {
     proxyController.delete(req, res);

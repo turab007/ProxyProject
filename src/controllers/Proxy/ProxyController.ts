@@ -26,12 +26,12 @@ export class ProxyController extends CrudController {
     }
 
     public async refresh(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
-        let update = await UpdateDB.findByPk(1, {raw:true});
-        let difference=600000;
-        if(update)
-         difference = Date.now() - update!.last_updated
+        let update = await UpdateDB.findByPk(1, { raw: true });
+        let difference = 600000;
+        if (update)
+            difference = Date.now() - update!.last_updated
         console.log(difference)
-        if (difference>=600000) {
+        if (difference >= 600000) {
             let url1 = 'https://free-proxy-list.net/';
             let url2 = 'https://www.netzwelt.de/proxy/index.html';
             let p1 = await this.getData(url1);
@@ -139,18 +139,32 @@ export class ProxyController extends CrudController {
                     res.sendStatus(200);
                     console.log('end!');
                 });
-
-            // res.json(result);
-
-            //   return await this.getData();
         }
         else {
             res.status(406).send({
                 message: 'Updated less than 10 mins ago'
             });
-
-
         }
+    }
+
+    public async checkBasivFunctionality(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
+        Proxy.findAll<Proxy>({}).then((proxy: Array<Proxy>) => {
+            proxy.forEach(async proxyElement => {
+                const options = {
+                    url: 'https://www.google.com/',
+                    method: 'GET',
+                    proxy: '61.167.35.147:8080'
+                }
+               let ans = await request.get(options)
+               if(ans)
+               {
+                // console.log('ans',ans)
+                   // console.log( proxyElement.ip,':',proxyElement.port);
+               }
+
+            });
+
+        })
     }
 
     public async getData(proxy: string) {
