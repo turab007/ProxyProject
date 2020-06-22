@@ -48,7 +48,7 @@ Proxy.init(
 );
 
 Proxy.sync().then(() => {
-  //  console.log("Proxy table createdf")
+  //  console.log("Proxy table created")
 }
 );
 

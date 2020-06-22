@@ -1,5 +1,4 @@
 import { Sequelize } from "sequelize";
-import sequelize from "sequelize";
 
 export const database = new Sequelize({
   database: "ProxyProject",
@@ -9,6 +8,12 @@ export const database = new Sequelize({
 
 export const updateDB = new Sequelize({
   database: "updateDB",
+  dialect: "sqlite",
+  storage: "./proxy.sqlite"
+}); 
+
+export const urlTestDB = new Sequelize({
+  database: "urlTestDB",
   dialect: "sqlite",
   storage: "./proxy.sqlite"
 }); 

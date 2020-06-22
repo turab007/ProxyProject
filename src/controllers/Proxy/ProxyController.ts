@@ -100,6 +100,7 @@ export class ProxyController extends CrudController {
                                 port: element.port,
                                 code: element.country,
                                 provider: element.source,
+                                basicFunctionality: false,
                                 https: 'http'
                             }
                             await Proxy.create(obj).catch((err) => {
@@ -165,6 +166,11 @@ export class ProxyController extends CrudController {
             });
 
         })
+    }
+
+
+    public async performTest(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
+
     }
 
     public async getData(proxy: string) {
