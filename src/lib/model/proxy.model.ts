@@ -52,6 +52,4 @@ export interface ProxyInterface {
   code: string;
   https: string;
   provider: string;
-  createdAt: Date;
-  updatedAt: Date;
 }

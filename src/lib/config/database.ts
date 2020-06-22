@@ -7,6 +7,12 @@ export const database = new Sequelize({
   storage: "./proxy.sqlite"
 }); 
 
+export const updateDB = new Sequelize({
+  database: "updateDB",
+  dialect: "sqlite",
+  storage: "./proxy.sqlite"
+}); 
+
 // database.authenticate().then(()=>{
 //   // console.log('Connection established');
 // })
