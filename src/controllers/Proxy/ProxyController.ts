@@ -213,46 +213,62 @@ export class ProxyController extends CrudController {
         const ip: string = req.body.ip;
 
         let proxy = await Proxy.findByPk(ip, { raw: true })
-
+        console.log('Inside');
         if (proxy) {
             axios
-                .get(url)
-                .then((a) => {
-                    axios
-                        .get(url, {
-                            proxy: {
-                                host: proxy.ip,
-                                port: proxy.port,
-                            },
-                        })
-                        .then((response) => {
-                            console.log("hello");
-                            let urlTest: urlTestInterface = {
-                                ip: proxy.ip,
-                                url: url,
-                                pass: true,
-                                testDate: Date.now()
-                            }
-                            UrlTest.create(urlTest).then(resp => {
-                                console.log('Done');
-                                res.send("Hello World!");
-                            });
-                        })
-                        .catch((error) => {
-                            let urlTest: urlTestInterface = {
-                                ip: proxy.ip,
-                                url: url,
-                                pass: false,
-                                testDate: Date.now()
-                            }
-                            UrlTest.create(urlTest).then(resp => {
-                                console.log("Heavy Error");
-                                res.send("Hello World!");
-                            });
-                        });
-                    // res.send("Hello World!");
+                .get(url, {
+                    proxy: {
+                        host: proxy.ip,
+                        port: proxy.port,
+                    },
                 })
-                .catch(() => { });
+                .then((response) => {
+                    let test = UrlTest.findOne({ where: { ip: proxy.ip, url: url } });
+                    if (!test) {
+
+                        console.log("hello");
+                        let urlTest: urlTestInterface = {
+                            ip: proxy.ip,
+                            url: url,
+                            pass: true,
+                            testDate: Date.now()
+                        }
+                        UrlTest.create(urlTest).then(resp => {
+                            console.log('Done');
+                            res.send("Hello World!");
+                        });
+                    }
+                    else {
+                        UrlTest.update(UrlTest, { where: { ip: proxy.ip, url: url } }).then(resp => {
+                            console.log('updated');
+                            res.send(200);
+                        })
+                    }
+                })
+                .catch((error) => {
+                    let test = UrlTest.findOne({ where: { ip: proxy.ip, url: url } });
+                    if (!test) {
+
+                        let urlTest: urlTestInterface = {
+                            ip: proxy.ip,
+                            url: url,
+                            pass: false,
+                            testDate: Date.now()
+                        }
+                        UrlTest.create(urlTest).then(resp => {
+                            console.log("Heavy Error");
+                            res.send("Hello World!");
+                        });
+                    }
+                    else {
+                        UrlTest.update(UrlTest, { where: { ip: proxy.ip, url: url } }).then(resp => {
+                            console.log('updated');
+                            res.send(200);
+                        })
+                    }
+                });
+            // res.send("Hello World!");
+
 
 
         }
