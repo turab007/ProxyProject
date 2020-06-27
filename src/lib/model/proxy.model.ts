@@ -8,6 +8,7 @@ export class Proxy extends Model {
   public https!: string;
   public provider!: string;
   public basicFunctionality!: boolean;
+  public testDate!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -20,24 +21,28 @@ Proxy.init(
       primaryKey: true
     },
     port: {
-      type: new DataTypes.INTEGER,
+      type:  DataTypes.INTEGER,
       allowNull: false,
     },
     code: {
-      type: new DataTypes.STRING,
+      type:  DataTypes.STRING,
       allowNull: false
     },
     https: {
-      type: new DataTypes.STRING,
+      type:  DataTypes.STRING,
       allowNull: false
     },
     provider: {
-      type: new DataTypes.STRING,
+      type:  DataTypes.STRING,
       allowNull: false
     },
     basicFunctionality: {
-      type: new DataTypes.BOOLEAN,
+      type:  DataTypes.BOOLEAN,
       defaultValue:false,
+      allowNull: true
+    },
+    testDate: {
+      type: DataTypes.STRING,
       allowNull: true
     }
   },
@@ -58,5 +63,6 @@ export interface ProxyInterface {
   code: string;
   https: string;
   provider: string;
-  basicFunctionality: boolean
+  basicFunctionality: boolean;
+  testDate: string | null;
 }

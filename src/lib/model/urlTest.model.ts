@@ -4,6 +4,7 @@ import { urlTestDB } from "../config/database";
 export class urlTest extends Model {
     public ip!: string;
     public url!: string;
+    public pass!: boolean;
     //   public code!: string;
     //   public https!: string;
     //   public provider!: string;
@@ -19,6 +20,15 @@ urlTest.init(
             allowNull: false,
             primaryKey: true
         },
+        url: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            primaryKey: true
+        },
+        pass: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+        }
     },
     {
         tableName: "urlTestDB",
@@ -34,5 +44,6 @@ urlTest.sync().then(() => {
 export interface urlTestInterface {
     ip: string;
     url: string;
+    pass: boolean;
 
 }

@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import { CrudController } from '../CrudController';
-import { Proxy, ProxyInterface, UpdateDB, UpdateDBInterface } from '../../lib'
+import { Proxy, ProxyInterface, UpdateDB, UpdateDBInterface, urlTest, urlTestInterface } from '../../lib'
 import * as cheerio from 'cheerio';
 import * as request from 'request-promise-native';
 import * as ProxyLists from 'proxy-lists';
 import { updateDB } from '../../lib/config/database';
+const axios = require('axios').default;
+import * as ping from 'ping';
 
 
 export class ProxyController extends CrudController {
@@ -34,6 +36,30 @@ export class ProxyController extends CrudController {
         if (difference >= 600000) {
             let url1 = 'https://free-proxy-list.net/';
             let url2 = 'https://www.netzwelt.de/proxy/index.html';
+            const apiUrl = `https://proxy11.com/api/proxy.json?key=MTQwNw.Xu0Mag.2wmeed0XUYidIwawxvTOAOBe5G0`;
+
+            axios
+                .get(apiUrl)
+                .then((a) => {
+                    // console.log(">>>>>>>>>>", a.data);
+                    let proxies = a.data.data;
+                    proxies.forEach(async proxy => {
+                        let obj: ProxyInterface = {
+                            ip: proxy.ip,
+                            port: proxy.port,
+                            code: proxy.country_code,
+                            provider: 'proxy11.com',
+                            https: 'http',
+                            basicFunctionality: false,
+                            testDate: null
+
+                        }
+                        await Proxy.create(obj);
+                    });
+                    // res.send(a.data.data);
+                })
+                .catch(() => { });
+
             let p1 = await this.getData(url1);
             let $ = cheerio.load(p1);
 
@@ -72,13 +98,17 @@ export class ProxyController extends CrudController {
             params = result;
             console.log(result)
             result.forEach(async element => {
-                let a = await Proxy.findByPk(element.ip)
+                let a = await Proxy.findByPk(element.ip, { raw: true })
                 if (!a) {
                     let resp = await Proxy.create(element)
                     // console.log('this is resp ', resp);
                 }
                 else {
-                    await a.changed('updatedAt', true)
+                    Proxy.update<Proxy>({ port: a.port }, {
+                        where: {
+                            ip: a.ip
+                        }
+                    })
                     console.log('updating updatedAt')
 
                 }
@@ -88,7 +118,7 @@ export class ProxyController extends CrudController {
             ProxyLists.getProxies({
                 // options
                 countries: ['us'],
-                sourcesWhiteList: ['proxy-list-org', 'checkerproxy', 'xroxy']
+                sourcesWhiteList: ['proxy-list-org', 'xroxy']
             })
                 .on('data', function (proxies) {
                     // Received some proxies.
@@ -101,6 +131,7 @@ export class ProxyController extends CrudController {
                                 code: element.country,
                                 provider: element.source,
                                 basicFunctionality: false,
+                                testDate: null,
                                 https: 'http'
                             }
                             await Proxy.create(obj).catch((err) => {
@@ -148,28 +179,58 @@ export class ProxyController extends CrudController {
         }
     }
 
-    public async checkBasivFunctionality(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
-        Proxy.findAll<Proxy>({}).then((proxy: Array<Proxy>) => {
-            proxy.forEach(async proxyElement => {
-                const options = {
-                    url: 'https://www.google.com/',
-                    method: 'GET',
-                    proxy: '61.167.35.147:8080'
+    public async checkBasicFunctionality(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
+        console.log('Inside the basic tests')
+
+        let proxies: Proxy[] = await Proxy.findAll<Proxy>({ raw: true });
+        proxies.forEach(proxy => {
+            ping.promise.probe(proxy.ip).then(res => {
+                Proxy.update<Proxy>({ basicFunctionality: res.alive }, {
+                    where: {
+                        ip: proxy.ip
+                    }
+                })
+                // console.log('response ',res);
+                if (res.alive) {
+                    console.log('I am alive', res.host);
                 }
-               let ans = await request.get(options)
-               if(ans)
-               {
-                // console.log('ans',ans)
-                   // console.log( proxyElement.ip,':',proxyElement.port);
-               }
+                else {
+                    console.log('I am dead', res.host);
+                }
+            }).catch(err => {
+                console.log('I have error ', err)
+            })
 
-            });
-
-        })
+        });
+        res.sendStatus(200);
+     
+        // res.sendStatus(200);
     }
 
 
     public async performTest(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
+        const url = `https://proxy11.com/api/proxy.json?key=MTQwNw.Xu0Mag.2wmeed0XUYidIwawxvTOAOBe5G0`;
+
+        axios
+            .get(url)
+            .then((a) => {
+                console.log(">>>>>>>>>>", a.data.data[4]);
+                axios
+                    .get("https://randomuser.me/api/?results=50", {
+                        proxy: {
+                            host: a.data.data[4].ip,
+                            port: a.data.data[4].port,
+                        },
+                    })
+                    .then((response) => {
+                        console.log("hello");
+                    })
+                    .catch((error) => {
+                        console.log("Heavy Error");
+                    });
+                res.send("Hello World!");
+            })
+            .catch(() => { });
 
     }
 
