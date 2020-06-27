@@ -26,7 +26,7 @@ router.get('/basicTest', (req: Request, res: Response) => {
     proxyController.checkBasicFunctionality(req, res);
 });
 
-router.get('/performTest', (req: Request, res: Response) => {
+router.post('/performTest', (req: Request, res: Response) => {
     proxyController.performTest(req, res);
 });
 

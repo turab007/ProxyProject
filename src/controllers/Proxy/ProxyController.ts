@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { CrudController } from '../CrudController';
-import { Proxy, ProxyInterface, UpdateDB, UpdateDBInterface, urlTest, urlTestInterface } from '../../lib'
+import { Proxy, ProxyInterface, UpdateDB, UpdateDBInterface, UrlTest, urlTestInterface } from '../../lib'
 import * as cheerio from 'cheerio';
 import * as request from 'request-promise-native';
 import * as ProxyLists from 'proxy-lists';
@@ -203,35 +203,63 @@ export class ProxyController extends CrudController {
 
         });
         res.sendStatus(200);
-     
+
         // res.sendStatus(200);
     }
 
 
     public async performTest(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
-        const url = `https://proxy11.com/api/proxy.json?key=MTQwNw.Xu0Mag.2wmeed0XUYidIwawxvTOAOBe5G0`;
+        const url: string = req.body.url;
+        const ip: string = req.body.ip;
 
-        axios
-            .get(url)
-            .then((a) => {
-                console.log(">>>>>>>>>>", a.data.data[4]);
-                axios
-                    .get("https://randomuser.me/api/?results=50", {
-                        proxy: {
-                            host: a.data.data[4].ip,
-                            port: a.data.data[4].port,
-                        },
-                    })
-                    .then((response) => {
-                        console.log("hello");
-                    })
-                    .catch((error) => {
-                        console.log("Heavy Error");
-                    });
-                res.send("Hello World!");
-            })
-            .catch(() => { });
+        let proxy = await Proxy.findByPk(ip, { raw: true })
 
+        if (proxy) {
+            axios
+                .get(url)
+                .then((a) => {
+                    // console.log(">>>>>>>>>>", a.data.data[4]);
+                    axios
+                        .get(url, {
+                            proxy: {
+                                host: proxy.ip,
+                                port: proxy.port,
+                            },
+                        })
+                        .then((response) => {
+                            console.log("hello");
+                            let urlTest: urlTestInterface = {
+                                ip: proxy.ip,
+                                url: url,
+                                pass: true,
+                                testDate: Date.now()
+                            }
+                            UrlTest.create(urlTest).then(resp => {
+                                console.log('Done');
+                                res.send("Hello World!");
+                            });
+                        })
+                        .catch((error) => {
+                            let urlTest: urlTestInterface = {
+                                ip: proxy.ip,
+                                url: url,
+                                pass: false,
+                                testDate: Date.now()
+                            }
+                            UrlTest.create(urlTest).then(resp => {
+                                console.log("Heavy Error");
+                                res.send("Hello World!");
+                            });
+                        });
+                    // res.send("Hello World!");
+                })
+                .catch(() => { });
+
+
+        }
+        else {
+            res.send('IP address not found');
+        }
     }
 
     public async getData(proxy: string) {

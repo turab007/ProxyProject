@@ -1,10 +1,11 @@
 import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
 import { urlTestDB } from "../config/database";
 
-export class urlTest extends Model {
+export class UrlTest extends Model {
     public ip!: string;
     public url!: string;
     public pass!: boolean;
+    public testDate!: number;
     //   public code!: string;
     //   public https!: string;
     //   public provider!: string;
@@ -13,7 +14,7 @@ export class urlTest extends Model {
     public readonly updatedAt!: Date;
 }
 
-urlTest.init(
+UrlTest.init(
     {
         ip: {
             type: DataTypes.STRING,
@@ -28,6 +29,10 @@ urlTest.init(
         pass: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
+        },
+        testDate: {
+            type: DataTypes.NUMBER,
+            allowNull: false
         }
     },
     {
@@ -36,7 +41,7 @@ urlTest.init(
     }
 );
 
-urlTest.sync().then(() => {
+UrlTest.sync().then(() => {
     console.log('UrlTest table created')
 }
 );
@@ -45,5 +50,6 @@ export interface urlTestInterface {
     ip: string;
     url: string;
     pass: boolean;
+    testDate: number;
 
 }
