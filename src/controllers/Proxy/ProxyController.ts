@@ -218,7 +218,6 @@ export class ProxyController extends CrudController {
             axios
                 .get(url)
                 .then((a) => {
-                    // console.log(">>>>>>>>>>", a.data.data[4]);
                     axios
                         .get(url, {
                             proxy: {
@@ -279,10 +278,10 @@ export class ProxyController extends CrudController {
 
     public update(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response): void {
         const params: ProxyInterface = req.body.obj;
-        const id: string = req.body.id;
+        const ip: string = req.body.ip;
         Proxy.update<Proxy>(params, {
             where: {
-                id: id
+                ip: ip
             }
         })
             .then((proxy) => res.sendStatus(200))
@@ -292,7 +291,7 @@ export class ProxyController extends CrudController {
     public delete(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response): void {
         Proxy.destroy({
             where: {
-                id: req.body.id
+                ip: req.body.ip
             }
         }).then((resp) => {
             if (resp)
