@@ -245,14 +245,14 @@ export class ProxyController extends CrudController {
                             pass: true,
                             testDate: Date.now()
                         }
-                         UrlTest.update(urlTest, { where: { ip: proxy.ip, url: url } }).then(resp => {
+                         await UrlTest.update(urlTest, { where: { ip: proxy.ip, url: url } })
                             console.log('updated');
                             res.send(200);
-                        })
+                        
                     }
                 })
-                .catch((error) => {
-                    let test = UrlTest.findOne({ where: { ip: proxy.ip, url: url } });
+                .catch(async(error) => {
+                    let test = await UrlTest.findOne({ where: { ip: proxy.ip, url: url } });
                     if (!test) {
 
                         let urlTest: urlTestInterface = {
@@ -267,10 +267,9 @@ export class ProxyController extends CrudController {
                         });
                     }
                     else {
-                        UrlTest.update(UrlTest, { where: { ip: proxy.ip, url: url } }).then(resp => {
+                       await UrlTest.update(UrlTest, { where: { ip: proxy.ip, url: url } })
                             console.log('updated');
                             res.send(200);
-                        })
                     }
                 });
             // res.send("Hello World!");
