@@ -185,7 +185,7 @@ export class ProxyController extends CrudController {
         let proxies: Proxy[] = await Proxy.findAll<Proxy>({ raw: true });
         proxies.forEach(proxy => {
             ping.promise.probe(proxy.ip).then(res => {
-                Proxy.update<Proxy>({ basicFunctionality: res.alive }, {
+                Proxy.update<Proxy>({ basicFunctionality: res.alive, testDate: Date.now() }, {
                     where: {
                         ip: proxy.ip
                     }
@@ -222,8 +222,8 @@ export class ProxyController extends CrudController {
                         port: proxy.port,
                     },
                 })
-                .then((response) => {
-                    let test = UrlTest.findOne({ where: { ip: proxy.ip, url: url } });
+                .then(async(response) => {
+                    let test = await UrlTest.findOne({ where: { ip: proxy.ip, url: url } });
                     if (!test) {
 
                         console.log("hello");
@@ -233,13 +233,19 @@ export class ProxyController extends CrudController {
                             pass: true,
                             testDate: Date.now()
                         }
-                        UrlTest.create(urlTest).then(resp => {
+                         UrlTest.create(urlTest).then(resp => {
                             console.log('Done');
                             res.send("Hello World!");
                         });
                     }
                     else {
-                        UrlTest.update(UrlTest, { where: { ip: proxy.ip, url: url } }).then(resp => {
+                        let urlTest: urlTestInterface = {
+                            ip: proxy.ip,
+                            url: url,
+                            pass: true,
+                            testDate: Date.now()
+                        }
+                         UrlTest.update(urlTest, { where: { ip: proxy.ip, url: url } }).then(resp => {
                             console.log('updated');
                             res.send(200);
                         })
@@ -316,4 +322,30 @@ export class ProxyController extends CrudController {
                 res.sendStatus(404);
         })
     }
+    public async getTests(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
+        let ip = req.params.ip;
+        console.log('This is the ip', ip);
+        let proxy = await Proxy.findByPk(ip);
+        if (proxy) {
+            let tests = await UrlTest.findAll({ where: { ip: ip } });
+            res.json(tests);
+
+        }
+        else {
+            res.send({ message: 'IP does not exists' });
+        }
+        // Proxy.destroy({
+        //     where: {
+        //         ip: req.body.ip
+        //     }
+        // }).then((resp) => {
+        //     if (resp)
+        //         res.status(200).json(resp);
+        //     else
+        //         res.sendStatus(404);
+        // })
+
+        res.sendStatus(200);
+    }
+
 }
