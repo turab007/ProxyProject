@@ -34,6 +34,6 @@ router.get('/getTests/:ip', (req: Request, res: Response) => {
     proxyController.getTests(req, res);
 });
 
-router.delete('/', (req: Request, res: Response) => {
+router.post('/delete', (req: Request, res: Response) => {
     proxyController.delete(req, res);
 });

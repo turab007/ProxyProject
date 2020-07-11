@@ -168,7 +168,7 @@ export class ProxyController extends CrudController {
                             UpdateDB.create({ last_updated: Date.now() })
                         }
                     })
-                    res.sendStatus(200);
+                    res.send({ message: 'Success' });
                     console.log('end!');
                 });
         }
@@ -222,7 +222,7 @@ export class ProxyController extends CrudController {
                         port: proxy.port,
                     },
                 })
-                .then(async(response) => {
+                .then(async (response) => {
                     let test = await UrlTest.findOne({ where: { ip: proxy.ip, url: url } });
                     if (!test) {
 
@@ -233,7 +233,7 @@ export class ProxyController extends CrudController {
                             pass: true,
                             testDate: Date.now()
                         }
-                         UrlTest.create(urlTest).then(resp => {
+                        UrlTest.create(urlTest).then(resp => {
                             console.log('Done');
                             res.send("Hello World!");
                         });
@@ -245,13 +245,13 @@ export class ProxyController extends CrudController {
                             pass: true,
                             testDate: Date.now()
                         }
-                         await UrlTest.update(urlTest, { where: { ip: proxy.ip, url: url } })
-                            console.log('updated');
-                            res.send(200);
-                        
+                        await UrlTest.update(urlTest, { where: { ip: proxy.ip, url: url } })
+                        console.log('updated');
+                        res.send(200);
+
                     }
                 })
-                .catch(async(error) => {
+                .catch(async (error) => {
                     let test = await UrlTest.findOne({ where: { ip: proxy.ip, url: url } });
                     if (!test) {
 
@@ -267,9 +267,9 @@ export class ProxyController extends CrudController {
                         });
                     }
                     else {
-                       await UrlTest.update(UrlTest, { where: { ip: proxy.ip, url: url } })
-                            console.log('updated');
-                            res.send(200);
+                        await UrlTest.update(UrlTest, { where: { ip: proxy.ip, url: url } })
+                        console.log('updated');
+                        res.send(200);
                     }
                 });
             // res.send("Hello World!");
