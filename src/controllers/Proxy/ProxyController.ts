@@ -333,18 +333,33 @@ export class ProxyController extends CrudController {
         else {
             res.send({ message: 'IP does not exists' });
         }
-        // Proxy.destroy({
-        //     where: {
-        //         ip: req.body.ip
-        //     }
-        // }).then((resp) => {
-        //     if (resp)
-        //         res.status(200).json(resp);
-        //     else
-        //         res.sendStatus(404);
-        // })
+
+        
 
         res.sendStatus(200);
+    }
+
+    public async removeProxies(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
+         let proxies= await Proxy.findAll<Proxy>({})
+          proxies.forEach(proxy => {
+             if(!proxy.basicFunctionality) {
+                 let updateTime= Date.now() - proxy.testDate;
+                 if(updateTime>604800000)
+                 {
+                    Proxy.destroy({
+                        where: {
+                            ip: proxy.ip
+                        }
+                 })
+
+             
+            }
+        }
+             
+         });
+            res.json({message: 'Ok'});
+     
+
     }
 
 }
