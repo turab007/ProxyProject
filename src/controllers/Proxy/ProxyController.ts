@@ -340,26 +340,33 @@ export class ProxyController extends CrudController {
     }
 
     public async removeProxies(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
-         let proxies= await Proxy.findAll<Proxy>({})
-          proxies.forEach(proxy => {
-             if(!proxy.basicFunctionality) {
-                 let updateTime= Date.now() - proxy.testDate;
-                 if(updateTime>604800000)
-                 {
-                    Proxy.destroy({
-                        where: {
-                            ip: proxy.ip
-                        }
-                 })
+        let proxies= await Proxy.findAll<Proxy>({})
+         proxies.forEach(proxy => {
+            if(!proxy.basicFunctionality) {
+                let updateTime= Date.now() - proxy.testDate;
+                if(updateTime>604800000)
+                {
+                   Proxy.destroy({
+                       where: {
+                           ip: proxy.ip
+                       }
+                })
 
-             
-            }
-        }
-             
-         });
-            res.json({message: 'Ok'});
-     
+            
+           }
+       }
+            
+        });
+           res.json({message: 'Ok'});
+    
 
-    }
+   }
+
+   
+   public async getTestDate(req: Request<import("express-serve-static-core").ParamsDictionary>, res: Response) {
+    let updateDB= await UpdateDB.findByPk<UpdateDB>(1)
+    res.json(updateDB);
+}
+
 
 }

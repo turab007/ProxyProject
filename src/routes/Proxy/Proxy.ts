@@ -41,3 +41,7 @@ router.post('/delete', (req: Request, res: Response) => {
 router.get('/deleteProxies', (req: Request, res: Response) => {
     proxyController.removeProxies(req, res);
 });
+
+router.get('/getTestDate', (req: Request, res: Response) => {
+    proxyController.getTestDate(req, res);
+});
